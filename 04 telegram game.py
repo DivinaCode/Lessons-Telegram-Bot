@@ -18,6 +18,12 @@ def start_message(message):
     random_number = randint(0, 100) #ГЕНЕРАЦИЯ СЛУЧАЙНОГО ЧИСЛА
 
 
+########  ОТВЕТ НА КОМАНДУ TELL
+@bot.message_handler(commands=['tell']) #ловим команду START
+def tell_number(message):    
+    bot.send_message(message.chat.id, str(random_number)) #Отвечаем на команду START
+    
+
 ######## OТВЕТ НА ТЕКСТОВОЕ СООБЩЕНИЕ
 @bot.message_handler(content_types = ['text'])#Ловим сообщения с текстом
 def otvet (message):
@@ -30,9 +36,11 @@ def otvet (message):
         elif user_number > random_number:
             bot.send_message(message.chat.id, "Too big")
             
-        else:
+        elif user_number < random_number:
             bot.send_message(message.chat.id, "Too small")
-            
+
+        else:
+            bot.send_message(message.chat.id, str(random_number)+ " я загадал это число")
      
     except:
         bot.send_message(message.chat.id, "WRONG! ONLY NUMBERS")  
