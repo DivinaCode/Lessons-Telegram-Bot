@@ -8,6 +8,7 @@ bot = telebot.TeleBot('1486786215:AAFAgulzxpkgprRu0Wt6yH5NO725xRZGEUI')
 
 
 random_number = 0 #Число, которое потом заменится на случайное
+counter = 0 #счётчик попыток угадывания числа
 
 
 #########  ОТВЕТ НА КОМАНДУ START
@@ -19,7 +20,7 @@ def start_message(message):
 
 
 ########  ОТВЕТ НА КОМАНДУ TELL
-@bot.message_handler(commands=['tell']) #ловим команду START
+@bot.message_handler(commands=['tell']) #ловим команду TELL
 def tell_number(message):    
     bot.send_message(message.chat.id, str(random_number)) #Отвечаем на команду START
     
@@ -27,14 +28,19 @@ def tell_number(message):
 ######## OТВЕТ НА ТЕКСТОВОЕ СООБЩЕНИЕ
 @bot.message_handler(content_types = ['text'])#Ловим сообщения с текстом
 def otvet (message):
+    global counter #Разрешаем менять глобальную переменную counter
+    
     try: #Попытайся сделать это
         user_number = int(message.text) #Превращаем ответ пользователя из строки(str)  число(int)
 
+        counter += 1 #Прибавляем 1 к переменной counter
+        
         if user_number == random_number:
             bot.send_message(message.chat.id, "PERFECT! You guessed ")  
-        
+            bot.send_message(message.chat.id, str(counter)+ " попыток ты потратил")
         elif user_number > random_number:
             bot.send_message(message.chat.id, "Too big")
+            
             
         elif user_number < random_number:
             bot.send_message(message.chat.id, "Too small")
@@ -46,6 +52,7 @@ def otvet (message):
         bot.send_message(message.chat.id, "WRONG! ONLY NUMBERS")  
                 
 
+   
         
        
     
