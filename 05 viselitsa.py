@@ -4,23 +4,16 @@ from random import randint  # Подключаем функцию генерац
 # Подключаемся к боту через его ТОКЕН
 bot = telebot.TeleBot('1486786215:AAFAgulzxpkgprRu0Wt6yH5NO725xRZGEUI')
 
-
-animals = ["тигр","леопард"]
+#CGBCRB CKJD
+animals = ["тигр", "леопард"]
 geography = ["австралия", "африка"]
 space = ['скафандр', 'луна']
 other = ["антарктида", "параллелепипед", "акваланг", "пылесос", "кораблекрушение"]
 
 word = None
-letters = [] ##Список букв, которые мы угалали
-##Список букв, которые игрок не угадал
+letters = []  ##Список букв, которые мы угалали
+not_guessed = []  ###Список букв, которые игрок не угадал
 
-
-# words = None
-# #Выбрать случайный индекс
-# #сгенерировать случайное число и записать его в переменную
-# #использовать эту переменную вместо индекса
-# word = words[2]
-# print(word)
 
 
 #########  ОТВЕТ НА КОМАНДУ START
@@ -31,22 +24,14 @@ def start_message(message):
     markup.add(telebot.types.InlineKeyboardButton(text='География', callback_data=2))
     markup.add(telebot.types.InlineKeyboardButton(text='Космос', callback_data=3))
     markup.add(telebot.types.InlineKeyboardButton(text='Разное', callback_data=4))
-    bot.send_message(message.chat.id, text="Привет! Давай сыграем в виселицу, я хочу загадать слово, выбери тему: ", reply_markup=markup)
+    bot.send_message(message.chat.id, text="Привет! Давай сыграем в виселицу, я хочу загадать слово, выбери тему: ",
+                     reply_markup=markup)
 
 
-
-
-@bot.message_handler(commands=["/help"])
-###Вывести буквы, которые позьзователь ещё не угадывал
-
-# if 'a' not in letters and not in neugad:
-#     send a
- ##Вывести неугаданные буквы
 
 @bot.callback_query_handler(func=lambda call: True)
 def query_handler(call):
-
-    #bot.answer_callback_query(callback_query_id=call.id, text='Спасибо за честный ответ!')
+    # bot.answer_callback_query(callback_query_id=call.id, text='Спасибо за честный ответ!')
 
     if call.data == '1':
         words = animals
@@ -61,15 +46,11 @@ def query_handler(call):
         words = other
 
     global word
-    word = words[randint(0, len(words)-1)]
-
-    # letters = ["___" for x in range(len(word))]
-
+    word = words[randint(0, len(words) - 1)]
 
 
     bot.edit_message_reply_markup(call.message.chat.id, call.message.message_id)
-    bot.send_message(call.message.chat.id, "Я загадал слово, в нём "+str(len(word)) + " букв. Попробуй его угадать!")
-
+    bot.send_message(call.message.chat.id, "Я загадал слово, в нём " + str(len(word)) + " букв. Попробуй его угадать!")
 
 
 ######## OТВЕТ НА ТЕКСТОВОЕ СООБЩЕНИЕ
@@ -81,11 +62,11 @@ def otvet(message):
     if len(letter) == 1:  # Если прислали 1 букву
         if letter in word:
             bot.send_message(message.chat.id, "Такая буква есть")
-            letters.append(letter) #Добавим  букву в список угаданных букв
+            letters.append(letter)  # Добавим  букву в список угаданных букв
 
         else:
             bot.send_message(message.chat.id, "Нет такой буквы")
-            #добавляем букву в спиок неугаданных
+            # добавляем букву в спиок неугаданных
 
     else:  # если прислали целое слово
         if letter == word:
@@ -93,11 +74,15 @@ def otvet(message):
         else:
             bot.send_message(message.chat.id, "Не угадал!")
 
-    prompt =''
+    prompt = ''
     for l in word:
         if l in letters:
-            prompt+=l
+            prompt += l
         else:
-            prompt+="*___*"
+            prompt += "🔴"
     bot.send_message(message.chat.id, prompt)
+    if len(not_guessed) > 0:
+        bot.send_message(message.chat.id, not_guessed)
+
+
 bot.polling()  # Запрос сообщений
