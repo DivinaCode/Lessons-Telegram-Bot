@@ -4,13 +4,15 @@ from random import randint  # Подключаем функцию генерац
 # Подключаемся к боту через его ТОКЕН
 bot = telebot.TeleBot('1486786215:AAFAgulzxpkgprRu0Wt6yH5NO725xRZGEUI')
 
-#CGBCRB CKJD
+#СПИСКИ СЛОВ ДЛЯ УГАДЫВАНИЯ
 animals = ["тигр", "леопард"]
 geography = ["австралия", "африка"]
 space = ['скафандр', 'луна']
 other = ["антарктида", "параллелепипед", "акваланг", "пылесос", "кораблекрушение"]
 
-word = None
+word = None #
+
+
 letters = []  ##Список букв, которые мы угалали
 not_guessed = []  ###Список букв, которые игрок не угадал
 
@@ -56,6 +58,12 @@ def query_handler(call):
 ######## OТВЕТ НА ТЕКСТОВОЕ СООБЩЕНИЕ
 @bot.message_handler(content_types=['text'])  # Ловим сообщения с текстом
 def otvet(message):
+
+    if word == None:
+        start_message(message)
+        return
+
+
     print(message.text)
     letter = message.text.lower()
 
@@ -71,15 +79,22 @@ def otvet(message):
     else:  # если прислали целое слово
         if letter == word:
             bot.send_message(message.chat.id, "Дааааа! Ты угадал!")
+            return
         else:
             bot.send_message(message.chat.id, "Не угадал!")
 
     prompt = ''
+    guessed = True
     for l in word:
         if l in letters:
             prompt += l
         else:
             prompt += "🔴"
+            guessed = False
+
+    if guessed == True:
+        bot.send_message(message.chat.id, "URRRAAAA")
+
     bot.send_message(message.chat.id, prompt)
     if len(not_guessed) > 0:
         bot.send_message(message.chat.id, not_guessed)
